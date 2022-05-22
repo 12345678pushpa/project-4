@@ -43,7 +43,7 @@ const createUrl = async (req, res) => {
         if (!(/http(s?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/.test(longUrl))) {
             return res.status(400).send({ status: false, message: "Please Provide valid Url" })
         }
-        const isUrlPresent = await urlModel.findOne({ longUrl: longUrl }).select({urlCode:1,longUrl:1,shortUrl:1})
+        const isUrlPresent = await urlModel.findOne({ longUrl: longUrl })
 
         if (isUrlPresent) {
             return res.status(200).send({ status: true, message: "Short URL already created for this provide Long URL", data: isUrlPresent })
@@ -91,7 +91,7 @@ const getCode = async (req, res) => {
         const urlData = req.params.urlCode
 
         await SET_ASYNC(`${urlData}`, JSON.stringify(isUrlCodePresent))
-        return res.redirect(isUrlCodePresent.longUrl)
+        return res.status(302).redirect(isUrlCodePresent.longUrl)
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
